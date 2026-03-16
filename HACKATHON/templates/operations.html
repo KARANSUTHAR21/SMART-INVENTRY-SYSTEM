@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operations - WareFlow</title>
+    <link rel="stylesheet" href="/static/home.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: #1e293b;
+            color: white;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-links a.active {
+            background-color: #6366f1;
+        }
+        .operations-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+        .operation-form {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+        }
+        .operation-type {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .operation-purchase { background: #d1fae5; color: #059669; }
+        .operation-sale { background: #fee2e2; color: #dc2626; }
+        .operation-transfer { background: #dbeafe; color: #2563eb; }
+        .operation-adjustment { background: #fef3c7; color: #d97706; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div>
+            <img src="../static/WORKFLOW.png" height="40" alt="WareFlow Logo">
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/dashboard/operations" class="active">Operations</a>
+            <a href="/dashboard/stock">Stock</a>
+            <a href="/dashboard/history">History</a>
+            <a href="/dashboard/settings">Settings</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="operations-section">
+            <h2>Operations Management</h2>
+            <button class="btn-primary" onclick="toggleOperationForm()">+ New Operation</button>
+            
+            <div class="operation-form" id="operationForm">
+                <h3>Create New Operation</h3>
+                <form id="newOperationForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Operation Type</label>
+                            <select name="operation_type" required>
+                                <option value="">Select Type</option>
+                                <option value="purchase">Purchase</option>
+                                <option value="sale">Sale</option>
+                                <option value="transfer">Transfer</option>
+                                <option value="adjustment_in">Stock Adjustment (In)</option>
+                                <option value="adjustment_out">Stock Adjustment (Out)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Item</label>
+                            <select name="item_id" required>
+                                <option value="">Select Item</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" name="quantity" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Reference (Optional)</label>
+                            <input type="text" name="reference" placeholder="Invoice #, Order ID, etc.">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes (Optional)</label>
+                        <textarea name="notes" placeholder="Additional notes..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn-primary">Create Operation</button>
+                        <button type="button" class="btn-primary" style="background: #64748b;" onclick="toggleOperationForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Reference</th>
+                        <th>Notes</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="operations-table">
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #64748b;">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let operations = [];
+        let inventoryItems = [];
+
+        async function loadInventory() {
+            try {
+                const res = await fetch('/api/inventory');
+                inventoryItems = await res.json();
+                
+                const itemSelect = document.querySelector('select[name="item_id"]');
+                itemSelect.innerHTML = '<option value="">Select Item</option>' +
+                    inventoryItems.map(item => `<option value="${item.id}">${item.name} (${item.sku})</option>`).join('');
+            } catch (err) {
+                console.error('Failed to load inventory:', err);
+            }
+        }
+
+        async function loadOperations() {
+            try {
+                const res = await fetch('/api/operations');
+                operations = await res.json();
+                
+                const tbody = document.getElementById('operations-table');
+                
+                if (operations.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b;">No operations found.</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = operations.map(op => {
+                    const typeClass = `operation-${op.operation_type.replace('_', '-')}`;
+                    const typeText = op.operation_type.replace('_', ' ');
+                    
+                    return `<tr>
+                        <td><span class="operation-type ${typeClass}">${typeText}</span></td>
+                        <td>${op.item_name}</td>
+                        <td>${op.quantity}</td>
+                        <td>${op.reference || '-'}</td>
+                        <td>${op.notes || '-'}</td>
+                        <td>${new Date(op.created_at).toLocaleDateString()}</td>
+                    </tr>`;
+                }).join('');
+                
+            } catch (err) {
+                console.error('Failed to load operations:', err);
+            }
+        }
+
+        function toggleOperationForm() {
+            const form = document.getElementById('operationForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        document.getElementById('newOperationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const res = await fetch('/api/operations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (res.ok) {
+                    e.target.reset();
+                    toggleOperationForm();
+                    loadOperations();
+                    loadInventory();
+                } else {
+                    alert('Failed to create operation');
+                }
+            } catch (err) {
+                console.error('Error creating operation:', err);
+                alert('Error creating operation');
+            }
+        });
+
+        loadInventory();
+        loadOperations();
+    </script>
+</body>
+</html>

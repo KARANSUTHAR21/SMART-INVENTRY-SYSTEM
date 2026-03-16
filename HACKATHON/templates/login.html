@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WareFlow Login</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .alert { padding: 10px; margin: 10px 0; border-radius: 4px; text-align: center; }
+        .alert-error { background: #fee2e2; color: #dc2626; }
+        .alert-success { background: #d1fae5; color: #059669; }
+        .alert-info { background: #dbeafe; color: #2563eb; }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <img src="../static/WORKFLOW.png" alt="WareFlow" class="logo">
+
+        <h2>Login to Inventory</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/login">
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" name="email" id="email" placeholder="YourEmail@gmail.com" required>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" name="password" id="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn-login">Log In</button>
+        </form>
+
+        <button class="btn-login" style="background-color: var(--secondary); margin-top: 10px;"
+            onclick="window.location.href='/signup'">Create New Account</button>
+
+        <div class="footer-links" style="margin-top:16px;">
+            <a href="/login/forgot-password">Forgot password?</a>
+        </div>
+    </div>
+
+</body>
+
+</html>
